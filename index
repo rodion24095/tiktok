@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STREAMLAB — видео для Twitch и TikTok</title>
+  <meta name="description" content="STREAMLAB — продакшн-студия стримов и коротких видео для Twitch и TikTok. Эфиры, клипы, монтаж и продвижение." />
+  <style>
+    :root {
+      --bg: #0a0a12;
+      --bg-2: #101020;
+      --card: #151528;
+      --card-2: #1b1b32;
+      --text: #f4f4ff;
+      --muted: #a3a3c2;
+      --twitch: #9146ff;
+      --tiktok-cyan: #25f4ee;
+      --tiktok-pink: #fe2c55;
+      --line: rgba(255,255,255,.09);
+      --radius: 18px;
+      --max: 1160px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img, svg { display: block; max-width: 100%; }
+    .container { width: min(var(--max), 92%); margin: 0 auto; }
+    .section { padding: 96px 0; }
+    .section.alt { background: var(--bg-2); }
+
+    /* ---------- Header ---------- */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10,10,18,.82);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; letter-spacing: .5px; }
+    .logo-mark {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--twitch), var(--tiktok-pink));
+      display: grid; place-items: center; font-size: 1rem;
+      box-shadow: 0 0 24px rgba(145,70,255,.5);
+    }
+    .logo span { color: var(--twitch); }
+    .nav-links { display: flex; gap: 30px; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: .93rem; font-weight: 600; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 22px; border-radius: 12px; font-weight: 700; font-size: .93rem;
+      border: 1px solid transparent; cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--twitch), #6a2bff);
+      box-shadow: 0 8px 30px rgba(145,70,255,.35);
+    }
+    .btn-primary:hover { box-shadow: 0 12px 38px rgba(145,70,255,.55); }
+    .btn-outline { background: transparent; border-color: var(--line); color: var(--text); }
+    .btn-outline:hover { background: var(--card); }
+    .menu-toggle { display: none; background: none; border: 0; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative; padding: 110px 0 100px;
+      background:
+        radial-gradient(900px 500px at 75% 10%, rgba(145,70,255,.20), transparent 60%),
+        radial-gradient(700px 420px at 12% 80%, rgba(37,244,238,.10), transparent 60%);
+      overflow: hidden;
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+      pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 60px; align-items: center; position: relative; z-index: 2; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: 100px; font-size: .8rem; font-weight: 700;
+      background: rgba(145,70,255,.12); border: 1px solid rgba(145,70,255,.35); color: #c9a6ff;
+      margin-bottom: 22px;
+    }
+    .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--tiktok-cyan); box-shadow: 0 0 12px var(--tiktok-cyan); }
+    h1 { font-size: clamp(2.4rem, 5.2vw, 4rem); line-height: 1.08; letter-spacing: -1px; margin-bottom: 20px; }
+    h1 .grad {
+      background: linear-gradient(90deg, var(--twitch), var(--tiktok-pink), var(--tiktok-cyan));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p.lead { font-size: 1.1rem; color: var(--muted); max-width: 540px; margin-bottom: 30px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+    .hero-note { margin-top: 22px; font-size: .84rem; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-note b { color: var(--text); }
+
+    .player {
+      position: relative; border-radius: 22px; padding: 10px;
+      background: linear-gradient(135deg, rgba(145,70,255,.5), rgba(37,244,238,.25), rgba(254,44,85,.35));
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    }
+    .player-screen {
+      aspect-ratio: 16/11; border-radius: 15px; position: relative; overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(145,70,255,.35), transparent 60%),
+        linear-gradient(160deg, #1a1035, #0d0d1c 70%);
+      display: grid; place-items: center;
+    }
+    .player-screen .glow {
+      position: absolute; width: 60%; aspect-ratio: 1; border-radius: 50%;
+      background: radial-gradient(circle, rgba(145,70,255,.45), transparent 70%);
+      filter: blur(20px); animation: pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse { 50% { transform: scale(1.25); opacity: .6; } }
+    .play {
+      position: relative; z-index: 2; width: 74px; height: 74px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--tiktok-cyan), var(--twitch));
+      display: grid; place-items: center; cursor: pointer;
+      box-shadow: 0 0 40px rgba(37,244,238,.45); transition: transform .2s;
+    }
+    .play:hover { transform: scale(1.08); }
+    .play svg { width: 26px; margin-left: 4px; }
+    .live-tag {
+      position: absolute; top: 16px; left: 16px; z-index: 3;
+      background: var(--tiktok-pink); color: #fff; font-size: .72rem; font-weight: 800;
+      padding: 5px 11px; border-radius: 7px; letter-spacing: 1px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .live-tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: blink 1.2s infinite; }
+    @keyframes blink { 50% { opacity: .25; } }
+    .viewers {
+      position: absolute; top: 16px; right: 16px; z-index: 3;
+      background: rgba(0,0,0,.55); border: 1px solid var(--line); color: #fff;
+      font-size: .75rem; padding: 5px 11px; border-radius: 7px;
+    }
+    .player-bar { display: flex; align-items: center; gap: 8px; padding: 14px 8px 4px; }
+    .player-bar .track { flex: 1; height: 5px; border-radius: 5px; background: rgba(255,255,255,.12); overflow: hidden; }
+    .player-bar .track span { display: block; height: 100%; width: 62%; background: linear-gradient(90deg, var(--twitch), var(--tiktok-pink)); }
+    .player-bar small { color: var(--muted); font-size: .72rem; }
+
+    /* ---------- Section headings ---------- */
+    .head { max-width: 640px; margin-bottom: 52px; }
+    .kicker { color: var(--tiktok-cyan); font-weight: 800; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; }
+    h2 { font-size: clamp(1.9rem, 3.6vw, 2.7rem); line-height: 1.15; letter-spacing: -.5px; margin: 10px 0 14px; }
+    .head p { color: var(--muted); }
+
+    /* ---------- About ---------- */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .about-text p { color: var(--muted); margin-bottom: 16px; }
+    .about-text strong { color: var(--text); }
+    .features { display: grid; gap: 14px; margin-top: 26px; }
+    .feature { display: flex; gap: 14px; align-items: flex-start; }
+    .feature .check {
+      flex: 0 0 26px; height: 26px; border-radius: 8px;
+      background: rgba(37,244,238,.12); color: var(--tiktok-cyan);
+      display: grid; place-items: center; font-size: .85rem; font-weight: 900;
+    }
+    .feature b { display: block; font-size: .96rem; }
+    .feature small { color: var(--muted); font-size: .86rem; }
+    .about-visual {
+      border: 1px solid var(--line); border-radius: var(--radius); padding: 30px;
+      background: linear-gradient(160deg, var(--card), var(--bg)); position: relative; overflow: hidden;
+    }
+    .about-visual::before {
+      content: ""; position: absolute; width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(145,70,255,.3), transparent 70%); top: -60px; right: -60px;
+    }
+    .mini-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); position: relative; }
+    .mini-row:last-child { border-bottom: 0; }
+    .mini-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.2rem; flex: 0 0 auto; }
+    .mini-icon.tw { background: rgba(145,70,255,.18); }
+    .mini-icon.tt { background: rgba(254,44,85,.15); }
+    .mini-icon.yt { background: rgba(37,244,238,.13); }
+    .mini-row b { font-size: .95rem; }
+    .mini-row small { color: var(--muted); font-size: .8rem; display: block; }
+    .mini-row .stat { margin-left: auto; text-align: right; font-weight: 800; color: var(--tiktok-cyan); white-space: nowrap; }
+
+    /* ---------- Services ---------- */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 30px; transition: transform .25s, border-color .25s, background .25s;
+      position: relative; overflow: hidden;
+    }
+    .card:hover { transform: translateY(-6px); border-color: rgba(145,70,255,.55); background: var(--card-2); }
+    .card-icon {
+      width: 54px; height: 54px; border-radius: 15px; display: grid; place-items: center;
+      font-size: 1.5rem; margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(145,70,255,.25), rgba(37,244,238,.12));
+    }
+    .card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+    .card p { color: var(--muted); font-size: .92rem; margin-bottom: 18px; }
+    .card ul { list-style: none; display: grid; gap: 8px; }
+    .card ul li { font-size: .86rem; color: var(--muted); padding-left: 20px; position: relative; }
+    .card ul li::before { content: "→"; position: absolute; left: 0; color: var(--twitch); }
+    .card .tag {
+      position: absolute; top: 20px; right: 20px; font-size: .68rem; font-weight: 800;
+      padding: 4px 10px; border-radius: 100px; letter-spacing: .5px;
+    }
+    .tag.purple { background: rgba(145,70,255,.16); color: #c9a6ff; }
+    .tag.pink { background: rgba(254,44,85,.14); color: #ff8ea3; }
+    .tag.cyan { background: rgba(37,244,238,.12); color: var(--tiktok-cyan); }
+
+    /* ---------- Steps ---------- */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; counter-reset: step; }
+    .step { position: relative; padding: 28px 22px; border-top: 2px solid var(--line); }
+    .step::before {
+      counter-increment: step; content: "0" counter(step);
+      display: block; font-size: 2rem; font-weight: 900; margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--twitch), var(--tiktok-cyan));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .step h4 { font-size: 1.05rem; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: .88rem; }
+
+    /* ---------- Stats ---------- */
+    .stats-wrap { background: linear-gradient(135deg, rgba(145,70,255,.16), rgba(37,244,238,.08)); border-block: 1px solid var(--line); }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; padding: 60px 0; }
+    .stat-num { font-size: clamp(1.8rem, 4vw, 2.7rem); font-weight: 900; letter-spacing: -1px; }
+    .stat-num span { background: linear-gradient(90deg, var(--twitch), var(--tiktok-pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .stat-label { color: var(--muted); font-size: .88rem; margin-top: 4px; }
+
+    /* ---------- CTA ---------- */
+    .cta { text-align: center; }
+    .cta-box {
+      border: 1px solid var(--line); border-radius: 26px; padding: 64px 30px;
+      background:
+        radial-gradient(600px 300px at 50% 0%, rgba(145,70,255,.25), transparent 70%),
+        var(--card);
+      position: relative; overflow: hidden;
+    }
+    .cta h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); }
+    .cta p { color: var(--muted); max-width: 520px; margin: 0 auto 28px; }
+    .socials { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 30px; }
+    .social {
+      display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px;
+      border-radius: 12px; font-weight: 700; font-size: .92rem;
+      border: 1px solid var(--line); background: rgba(255,255,255,.03); transition: transform .2s, background .2s;
+    }
+    .social:hover { transform: translateY(-3px); background: var(--card-2); }
+    .social .ic { font-size: 1.1rem; }
+
+    /* ---------- Footer ---------- */
+    footer { border-top: 1px solid var(--line); padding: 34px 0; color: var(--muted); font-size: .86rem; }
+    .foot { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .foot .logo { color: var(--text); font-size: 1rem; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 900px) {
+      .hero-grid, .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .cards { grid-template-columns: 1fr 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; gap: 34px; }
+      .nav-links { display: none; position: absolute; top: 72px; left: 0; right: 0; flex-direction: column;
+        background: var(--bg-2); padding: 22px 5%; gap: 18px; border-bottom: 1px solid var(--line); }
+      .nav-links.open { display: flex; }
+      .menu-toggle { display: block; }
+    }
+    @media (max-width: 600px) {
+      .section { padding: 68px 0; }
+      .cards, .steps { grid-template-columns: 1fr; }
+      .hero { padding: 70px 0 60px; }
+      .hero-actions .btn { width: 100%; }
+      .cta-box { padding: 46px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container nav">
+      <a href="#top" class="logo"><span class="logo-mark">▶</span> STREAM<span>LAB</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#about">О компании</a>
+        <a href="#services">Услуги</a>
+        <a href="#process">Как работаем</a>
+        <a href="#contact">Контакты</a>
+      </nav>
+      <a href="#contact" class="btn btn-primary">Обсудить проект</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Меню">☰</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="container hero-grid">
+      <div>
+        <div class="badge"><span class="dot"></span> Продакшн-студия эфиров и коротких видео</div>
+        <h1>Видео, которое <span class="grad">смотрят до конца</span></h1>
+        <p class="lead">Делаем стримы на Twitch и цепляющие ролики для TikTok. От идеи и монтажа до стабильных эфиров и роста аудитории — берём техничку на себя.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">Запустить эфир →</a>
+          <a href="#services" class="btn btn-outline">Смотреть услуги</a>
+        </div>
+        <div class="hero-note">
+          <span><b>24/7</b> техподдержка эфиров</span>
+          <span><b>48 ч</b> монтаж ролика</span>
+          <span><b>0</b> скрытых платежей</span>
+        </div>
+      </div>
+
+      <div class="player">
+        <div class="live-tag">LIVE</div>
+        <div class="viewers">● 12 480 зрителей</div>
+        <div class="player-screen">
+          <div class="glow"></div>
+          <div class="play" aria-label="Воспроизвести">
+            <svg viewBox="0 0 24 24" fill="#0a0a12"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="player-bar">
+          <small>00:42</small>
+          <div class="track"><span></span></div>
+          <small>01:08</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section alt" id="about">
+    <div class="container about-grid">
+      <div class="about-text">
+        <div class="kicker">Кто мы</div>
+        <h2>Студия, которая живёт в эфире</h2>
+        <p><strong>STREAMLAB</strong> — команда продюсеров, операторов и монтажёров. Мы специализируемся на «заливке» видео-контента на <strong>Twitch</strong> и набираем обороты в <strong>TikTok</strong>.</p>
+        <p>Каждый эфир — это картинка, звук, свет и история. Мы собираем всё в единый процесс, чтобы ты фокусировался на контенте, а мы — на технике и продвижении.</p>
+        <div class="features">
+          <div class="feature"><div class="check">✓</div><div><b>Стабильный сигнал</b><small>Резервные каналы и мониторинг 24/7 — эфир не прервётся</small></div></div>
+          <div class="feature"><div class="check">✓</div><div><b>Монтаж под платформу</b><small>Вертикальные клипы для TikTok и хайлайты для Twitch</small></div></div>
+          <div class="feature"><div class="check">✓</div><div><b>Прозрачные цифры</b><small>Отчёты по охватам, зрителям и вовлечённости</small></div></div>
+        </div>
+      </div>
+
+      <div class="about-visual">
+        <div class="mini-row">
+          <div class="mini-icon tw">🟣</div>
+          <div><b>Twitch</b><small>Прямые эфиры и техничка</small></div>
+          <div class="stat">1 200+ эфиров</div>
+        </div>
+        <div class="mini-row">
+          <div class="mini-icon tt">🎵</div>
+          <div><b>TikTok</b><small>Клипы и вертикальное видео</small></div>
+          <div class="stat">8 млн просмотров</div>
+        </div>
+        <div class="mini-row">
+          <div class="mini-icon yt">🎬</div>
+          <div><b>Монтаж</b><small>Хайлайты, титры, оформление</small></div>
+          <div class="stat">48 часов</div>
+        </div>
+        <div class="mini-row">
+          <div class="mini-icon tw">📈</div>
+          <div><b>Продвижение</b><small>Рост аудитории и охватов</small></div>
+          <div class="stat">+37% в среднем</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="head">
+        <div class="kicker">Услуги</div>
+        <h2>Всё для твоего видео</h2>
+        <p>От разового эфира до полноценного продакшена — выбери, что нужно сейчас.</p>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <span class="tag purple">TWITCH</span>
+          <div class="card-icon">🎥</div>
+          <h3>Эфиры и стримы</h3>
+          <p>Организуем и проведём прямой эфир «под ключ»: звук, свет, камера, оверлеи.</p>
+          <ul><li>Настройка OBS и сцен</li><li>Резервный интернет и звук</li><li>Оператор на площадке или удалённо</li></ul>
+        </div>
+        <div class="card">
+          <span class="tag pink">TIKTOK</span>
+          <div class="card-icon">📱</div>
+          <h3>Клипы для TikTok</h3>
+          <p>Нарежем из эфиров вирусные моменты и адаптируем под вертикальный формат.</p>
+          <ul><li>Вертикальный монтаж 9:16</li><li>Динамичные титры и субтитры</li><li>Подбор трендовой музыки</li></ul>
+        </div>
+        <div class="card">
+          <span class="tag cyan">ПРОДАКШН</span>
+          <div class="card-icon">✂️</div>
+          <h3>Монтаж и оформление</h3>
+          <p>Сделаем картинку и звук чистыми, а бренд — узнаваемым на любой платформе.</p>
+          <ul><li>Цветокоррекция и звук</li><li>Оверлеи, заставки, логотип</li><li>Хайлайты и короткие анонсы</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section alt" id="process">
+    <div class="container">
+      <div class="head">
+        <div class="kicker">Процесс</div>
+        <h2>Как мы работаем</h2>
+        <p>Четыре шага — и твой контент уже в эфире.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h4>Заявка</h4><p>Рассказываешь о задаче и платформах — отвечаем за час.</p></div>
+        <div class="step"><h4>План</h4><p>Согласовываем формат, расписание и бюджет без сюрпризов.</p></div>
+        <div class="step"><h4>Производство</h4><p>Снимаем, монтируем и настраиваем техническую часть эфира.</p></div>
+        <div class="step"><h4>Результат</h4><p>Публикуем, ведём эфир и присылаем отчёт по охватам.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-wrap">
+    <div class="container stats">
+      <div><div class="stat-num"><span>1 200+</span></div><div class="stat-label">проведённых эфиров</div></div>
+      <div><div class="stat-num"><span>8 млн</span></div><div class="stat-label">просмотров в TikTok</div></div>
+      <div><div class="stat-num"><span>250+</span></div><div class="stat-label">каналов на Twitch</div></div>
+      <div><div class="stat-num"><span>24/7</span></div><div class="stat-label">поддержка эфиров</div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta" id="contact">
+    <div class="container">
+      <div class="cta-box">
+        <div class="kicker">Начнём?</div>
+        <h2>Твой эфир ждёт</h2>
+        <p>Напиши нам в любую соцсеть — обсудим задачу и назовём точную стоимость в течение часа.</p>
+        <a href="mailto:hello@streamlab.ru" class="btn btn-primary">Написать на почту ✉</a>
+        <div class="socials">
+          <a class="social" href="https://twitch.tv" target="_blank" rel="noopener"><span class="ic">🟣</span> Twitch</a>
+          <a class="social" href="https://tiktok.com" target="_blank" rel="noopener"><span class="ic">🎵</span> TikTok</a>
+          <a class="social" href="https://t.me" target="_blank" rel="noopener"><span class="ic">✈️</span> Telegram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container foot">
+      <a href="#top" class="logo"><span class="logo-mark">▶</span> STREAM<span>LAB</span></a>
+      <span>© 2026 STREAMLAB. Видео для Twitch и TikTok.</span>
+      <span>hello@streamlab.ru</span>
+    </div>
+  </footer>
+
+  <script>
+    // Мобильное меню
+    const toggle = document.getElementById('menuToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+    // Плавное появление блоков при прокрутке
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.transition = 'opacity .6s ease, transform .6s ease';
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.card, .step, .mini-row, .stat').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(18px)';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
